@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Periodic Table</title>
+  <meta name="description" content="A modern, interactive periodic table with detailed element information and visualizations">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧪</text></svg>">
+</head>
+<body>
+  <header>
+    <h1>Periodic Table Explorer</h1>
+    <p class="subtitle">Visualizing the building blocks of matter</p>
+    <div id="controls">
+      <input id="search" type="text" placeholder="Search elements..." aria-label="Search elements by name, symbol or number" autocomplete="off">
+      <button id="dark-mode-toggle" aria-label="Toggle dark mode">
+        <span class="theme-icon">🌓</span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <div id="periodic-table" role="grid" aria-label="Periodic Table of Elements"></div>
+    
+    <aside id="legend">
+      <h3>Element Categories</h3>
+      <div class="legend-items">
+        <div class="legend-item" data-category="alkali metal">Alkali Metal</div>
+        <div class="legend-item" data-category="alkaline earth metal">Alkaline Earth</div>
+        <div class="legend-item" data-category="transition metal">Transition Metal</div>
+        <div class="legend-item" data-category="post-transition metal">Post-Transition</div>
+        <div class="legend-item" data-category="metalloid">Metalloid</div>
+        <div class="legend-item" data-category="reactive nonmetal">Reactive Nonmetal</div>
+        <div class="legend-item" data-category="noble gas">Noble Gas</div>
+        <div class="legend-item" data-category="lanthanide">Lanthanide</div>
+        <div class="legend-item" data-category="actinide">Actinide</div>
+      </div>
+    </aside>
+  </main>
+
+  <div id="element-modal" class="modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <button class="modal-close" aria-label="Close modal">&times;</button>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <template id="loading-template">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      <p>Loading elements...</p>
+    </div>
+  </template>
+
+  <template id="error-template">
+    <div class="error">
+      <p>⚠️ Failed to load periodic table data</p>
+      <button id="retry-button">Retry</button>
+    </div>
+  </template>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

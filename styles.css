@@ -1,0 +1,586 @@
+:root {
+  --bg: #f0f4f8;
+  --fg: #2d3748;
+  --cell-bg: #ffffff;
+  --overlay: rgba(0,0,0,0.7);
+  --modal-bg: #ffffff;
+  --primary: #4f46e5;
+  --secondary: #10b981;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+  --glow-intensity: 2px;
+}
+
+[data-theme="dark"] {
+  --bg: #1a202c;
+  --fg: #f7fafc;
+  --cell-bg: #2d3748;
+  --overlay: rgba(0,0,0,0.85);
+  --modal-bg: #2d3748;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.25);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.3);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.35);
+  --glow-intensity: 4px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  padding: 1rem;
+  transition: var(--transition);
+}
+
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(5px);
+  box-shadow: var(--shadow-sm);
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #4f46e5, #10b981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--fg);
+  opacity: 0.8;
+}
+
+#controls {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  background: rgba(255,255,255,0.1);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  backdrop-filter: blur(5px);
+  box-shadow: var(--shadow-sm);
+}
+
+#search {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 50px;
+  background: rgba(255,255,255,0.8);
+  transition: var(--transition);
+  width: 200px;
+}
+
+#search:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+  border-color: var(--primary);
+}
+
+#dark-mode-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--fg);
+  transition: var(--transition);
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+#dark-mode-toggle:hover {
+  background: rgba(0,0,0,0.1);
+  transform: rotate(30deg);
+}
+
+#periodic-table {
+  display: grid;
+  grid-template-columns: repeat(18, 70px);
+  grid-auto-rows: 70px;
+  gap: 8px;
+  justify-content: center;
+  margin: 2rem auto;
+  max-width: 1200px;
+  perspective: 1000px;
+}
+
+.element {
+  background: var(--cell-bg);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  padding: 4px;
+}
+
+.element::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(255,255,255,0.3) 100%);
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.element:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+}
+
+.element:hover::before {
+  opacity: 1;
+}
+
+.element:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.element .number {
+  font-size: 0.65rem;
+  align-self: flex-start;
+  padding: 4px 0 0 6px;
+  opacity: 0.7;
+  font-weight: 500;
+}
+
+.element .symbol {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 2px 0;
+  text-shadow: 0 0 var(--glow-intensity) currentColor;
+}
+
+.element .name {
+  font-size: 0.55rem;
+  opacity: 0;
+  height: 0;
+  transition: var(--transition);
+  text-align: center;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+.element:hover .name {
+  opacity: 0.9;
+  height: auto;
+  max-height: 14px;
+}
+
+/* Updated category colors to match PubChem */
+.element[data-category="alkali metal"] {
+  background: #FF6666;
+  color: #5c0000;
+}
+.element[data-category="alkaline earth metal"] {
+  background: #FFDEAD;
+  color: #6d4c00;
+}
+.element[data-category="transition metal"] {
+  background: #FFC0C0;
+  color: #5c0000;
+}
+.element[data-category="post-transition metal"] {
+  background: #CCCCCC;
+  color: #333333;
+}
+.element[data-category="metalloid"] {
+  background: #CCCC99;
+  color: #333300;
+}
+.element[data-category="reactive nonmetal"] {
+  background: #99FF99;
+  color: #003300;
+}
+.element[data-category="noble gas"] {
+  background: #CCCCFF;
+  color: #00005c;
+}
+.element[data-category="lanthanide"] {
+  background: #FFBFFF;
+  color: #5c005c;
+}
+.element[data-category="actinide"] {
+  background: #FF99CC;
+  color: #5c002b;
+}
+.element[data-category="unknown"] {
+  background: #E0E0E0;
+  color: #333333;
+}
+
+/* Special hover effects */
+.element[data-category="noble gas"]:hover {
+  box-shadow: 0 0 15px 5px rgba(204, 204, 255, 0.5);
+}
+.element[data-category="reactive nonmetal"]:hover {
+  box-shadow: 0 0 15px 5px rgba(153, 255, 153, 0.5);
+}
+.element[data-category="alkali metal"]:hover {
+  box-shadow: 0 0 15px 5px rgba(255, 102, 102, 0.5);
+}
+
+.empty-cell {
+  background: transparent;
+  border: 1px dashed rgba(0,0,0,0.1);
+  pointer-events: none;
+}
+
+/* Legend styles */
+#legend {
+  margin: 2rem auto;
+  max-width: 800px;
+  padding: 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12px;
+}
+
+.legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.legend-item {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.legend-item[data-category="alkali metal"] {
+  background: #FF6666;
+  color: #5c0000;
+}
+.legend-item[data-category="alkaline earth metal"] {
+  background: #FFDEAD;
+  color: #6d4c00;
+}
+.legend-item[data-category="transition metal"] {
+  background: #FFC0C0;
+  color: #5c0000;
+}
+.legend-item[data-category="post-transition metal"] {
+  background: #CCCCCC;
+  color: #333333;
+}
+.legend-item[data-category="metalloid"] {
+  background: #CCCC99;
+  color: #333300;
+}
+.legend-item[data-category="reactive nonmetal"] {
+  background: #99FF99;
+  color: #003300;
+}
+.legend-item[data-category="noble gas"] {
+  background: #CCCCFF;
+  color: #00005c;
+}
+.legend-item[data-category="lanthanide"] {
+  background: #FFBFFF;
+  color: #5c005c;
+}
+.legend-item[data-category="actinide"] {
+  background: #FF99CC;
+  color: #5c002b;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 100;
+  backdrop-filter: blur(5px);
+}
+
+.modal:not(.hidden) {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  background: var(--modal-bg);
+  padding: 2.5rem;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.modal:not(.hidden) .modal-content {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.modal-symbol {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-right: 1.5rem;
+  min-width: 60px;
+  text-align: center;
+}
+
+.modal-title h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.modal-title p {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.modal-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.detail-item {
+  background: rgba(0,0,0,0.05);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+.detail-item h3 {
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+  opacity: 0.7;
+}
+
+.detail-item p {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: var(--fg);
+  opacity: 0.7;
+  transition: var(--transition);
+}
+
+.modal-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  margin-top: 2rem;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(79, 70, 229, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
+}
+
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #e53e3e;
+}
+
+#retry-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes elementDiscovery {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation: elementDiscovery 0.6s ease-out forwards;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 1200px) {
+  #periodic-table {
+    grid-template-columns: repeat(18, 50px);
+    grid-auto-rows: 50px;
+  }
+  
+  .element .name {
+    font-size: 0.5rem;
+  }
+}
+
+@media (max-width: 900px) {
+  #periodic-table {
+    grid-template-columns: repeat(18, 40px);
+    grid-auto-rows: 40px;
+    gap: 4px;
+  }
+  
+  .element .symbol {
+    font-size: 1.1rem;
+  }
+  
+  .element .number {
+    font-size: 0.55rem;
+  }
+  
+  .element .name {
+    font-size: 0.45rem;
+  }
+}
+
+@media (max-width: 700px) {
+  #periodic-table {
+    grid-template-columns: repeat(9, 50px);
+    grid-auto-rows: 50px;
+  }
+  
+  header {
+    padding: 0.5rem;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  #controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  #search {
+    width: 100%;
+  }
+  
+  /* Adjust lanthanides/actinides for mobile */
+  .element[data-category="lanthanide"],
+  .element[data-category="actinide"] {
+    grid-row: auto !important;
+    grid-column: auto !important;
+  }
+}
+
+@media (max-width: 500px) {
+  #periodic-table {
+    grid-template-columns: repeat(9, 40px);
+    grid-auto-rows: 40px;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .modal-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .modal-symbol {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  
+  .legend-items {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .element .name {
+    font-size: 0.4rem;
+  }
+}
